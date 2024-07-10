@@ -1,3 +1,3 @@
 <?php
 
-echo 'page does not exists';
+loadView('error/404');

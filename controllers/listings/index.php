@@ -1,3 +1,3 @@
 <?php
 
-echo 'List all jobs';
+loadView('listings/index');
