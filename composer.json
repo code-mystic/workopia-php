@@ -1,0 +1,16 @@
+{
+    "name": "code-mystic/workopia-php",
+    "description": "A JOB application app on PHP",
+    "authos": [
+        {
+            "name": "Pallab Banerjee",
+            "email": "pallab.inbox@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Framework\\": "Framework/",
+            "App\\": "App/"
+        }
+    }
+}
