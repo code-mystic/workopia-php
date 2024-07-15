@@ -2,16 +2,21 @@
 
 namespace Framework;
 
+use App\controllers\ErrorController;
+
 class Router
 {
     protected $routes = [];
 
-    private function registerRoute($method, $uri, $controller)
+    private function registerRoute($method, $uri, $action)
     {
+        list($controller, $controllerMethod) = explode('@', $action);
+
         $this->routes[] = [
             'uri' => $uri,
             'method' => $method,
-            'controller' => $controller
+            'controller' => $controller,
+            'controllerMethod' => $controllerMethod
         ];
     }
 
@@ -46,11 +51,17 @@ class Router
     {
         foreach ($this->routes as $route) {
             if ($route['uri'] === $uri && $route['method'] === $method) {
-                require basePath('App/' . $route['controller']);
+                // require basePath('App/' . $route['controller']);
+                $controller = 'App\\controllers\\' . $route['controller'];
+                $controllerMethod = $route['controllerMethod'];
+
+                // now instanciate the class and call the method
+                $controllerIns = new $controller();
+                $controllerIns->$controllerMethod();
                 return;
             }
         }
 
-        $this->error();
+        ErrorController::notFoundError();
     }
 }
