@@ -47,18 +47,46 @@ class Router
         exit;
     }
 
-    public function route($uri, $method)
+    public function route($uri)
     {
-        foreach ($this->routes as $route) {
-            if ($route['uri'] === $uri && $route['method'] === $method) {
-                // require basePath('App/' . $route['controller']);
-                $controller = 'App\\controllers\\' . $route['controller'];
-                $controllerMethod = $route['controllerMethod'];
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-                // now instanciate the class and call the method
-                $controllerIns = new $controller();
-                $controllerIns->$controllerMethod();
-                return;
+        $uriSegments = explode('/', trim($uri, '/'));
+        $uriSegementsCounts = count($uriSegments);
+
+        foreach ($this->routes as $route) {
+
+            $routeSegements = explode('/', trim($route['uri'], '/'));
+            $routeSegementsCount = count($routeSegements);
+
+            $match = true;
+
+            if ($uriSegementsCounts === $routeSegementsCount && strtoupper($route['method']) === $requestMethod) {
+                $params = [];
+                $match = true;
+
+                for ($i = 0; $i < $uriSegementsCounts; $i++) {
+                    if ($routeSegements[$i] !== $uriSegments[$i] && !preg_match('/\{(.+?)\}/', $routeSegements[$i])) {
+                        $match = false;
+                        break;
+                    }
+
+                    if (preg_match('/\{(.+?)\}/', $routeSegements[$i], $matches)) {
+                        $params[$matches[1]] = $uriSegments[$i];
+                    }
+                }
+
+
+
+                if ($match) {
+                    $controller = 'App\\controllers\\' . $route['controller'];
+                    $controllerMethod = $route['controllerMethod'];
+
+                    // now instanciate the class and call the method
+                    $controllerIns = new $controller();
+                    $controllerIns->$controllerMethod($params);
+                    return;
+                }
             }
         }
 
