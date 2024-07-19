@@ -51,6 +51,12 @@ class Router
     {
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
+        // Check for _method input
+        if ($requestMethod === 'POST' && isset($_POST['_method'])) {
+            // Override the request method with the value of _method
+            $requestMethod = strtoupper($_POST['_method']);
+        }
+
         $uriSegments = explode('/', trim($uri, '/'));
         $uriSegementsCounts = count($uriSegments);
 
